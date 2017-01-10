@@ -1,26 +1,34 @@
-var Base64  = require('./utils/Base64');
+/* 
+ * Each host has a resolution function which returns list [link, filelink] or null if no valid link 
+ * The hoster name corresponds to the filename of the resolver in the resolver directory (lowercase!)
+ */
 
-//returns list [link, filelink] or null if no valid link
-function resolveVivosx(StreamSiteVideoLink)
+/*
+ * Support functions
+ */
+
+// import resolver and resolve link
+function selectResolver(link, hostername)
 {
-	 	var responsse = showtime.httpReq(StreamSiteVideoLink,{
-			  compression: true,
-			  noFollow:false,
-			  method: "GET",
-			});
-	  	try
-	  	{
-		  	var re = /Core\.InitializeStream \(\'(.*?)\'\)/g;
-		  	var res2 = re.exec(responsse.toString());
-	    	var ob = showtime.JSONDecode(Base64.decode(res2[1]))
-	  	}
-	  	catch(e)
-	  	{
-	  		return null;
-	  	}
-	  	if(ob[0])
-	  		return [StreamSiteVideoLink,ob[0]];
-	  	else
-	  		return null;
+	try{
+		return require('./resolver/'+hostername.toLowerCase())(link);
+	}
+	catch(e){
+		return null;
+	}
 }
-module.exports.vivo = resolveVivosx;
+
+// check if the resolver for the given hoster is implemented
+function checkResolver(hostername)
+{
+	try{
+		require('./resolver/'+hostername.toLowerCase());
+		return " <font color=\"009933\">[Working]</font>";
+	}catch(e){
+		return " <font color=\"CC0000\">[Not Working]</font>";
+	}
+}
+
+// Export module functions / variables
+module.exports.resolve = selectResolver;
+module.exports.check = checkResolver;
