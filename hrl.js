@@ -23,9 +23,9 @@ function checkResolver(hostername)
 {
 	try{
 		require('./resolver/'+hostername.toLowerCase());
-		return " <font color=\"009933\">[Working]</font>";
+		return true;
 	}catch(e){
-		return " <font color=\"CC0000\">[Not Working]</font>";
+		return false;
 	}
 }
 
