@@ -14,6 +14,7 @@ function selectResolver(link, hostername)
 		return require('./resolver/'+hostername.toLowerCase())(link);
 	}
 	catch(e){
+		showtime.trace(e.message);
 		return null;
 	}
 }
@@ -25,6 +26,7 @@ function checkResolver(hostername)
 		require('./resolver/'+hostername.toLowerCase());
 		return true;
 	}catch(e){
+		showtime.trace(e.message);
 		return false;
 	}
 }
