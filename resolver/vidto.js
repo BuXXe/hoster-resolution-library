@@ -27,7 +27,7 @@ function resolve(link)
 	    // POSTING DATA
 	    var postresponse = showtime.httpReq(link, { postdata: postdata, method: "POST" });
 	     
-	    // find Dead Edwards packed content
+	    // find Dean Edwards packed content
 	    var FindPackedContent = /eval\(function\(p,a,c,k,e,d\)([\s\S]*?)<\/script>/g;
 	    var packed = "eval(function(p,a,c,k,e,d)" + FindPackedContent.exec(postresponse.toString())[1];
 	    

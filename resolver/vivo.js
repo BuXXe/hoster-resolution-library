@@ -9,7 +9,10 @@ function resolve(link)
     	var ob = showtime.JSONDecode(Base64.decode(result[1]))
     	return ob[0] ? [link,ob[0]] : null;
   	}
-  	catch(e){return null;}
+  	catch(e){
+  		showtime.trace(e.message);
+  		return null;
+  	}
 }
 
 //Export resolve function
