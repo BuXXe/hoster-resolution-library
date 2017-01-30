@@ -80,4 +80,4 @@ var P_A_C_K_E_R = {
     }
 };
 
-module.exports = P_A_C_K_E_R;
+exports.unpacker = P_A_C_K_E_R;

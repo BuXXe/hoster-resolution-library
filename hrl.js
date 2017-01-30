@@ -11,7 +11,7 @@
 function selectResolver(link, hostername)
 {
 	try{
-		return require('./resolver/'+hostername.toLowerCase())(link);
+		return require('./resolver/'+hostername.toLowerCase()).resolve(link);
 	}
 	catch(e){
 		showtime.trace(e.message);
@@ -32,5 +32,5 @@ function checkResolver(hostername)
 }
 
 // Export module functions / variables
-module.exports.resolve = selectResolver;
-module.exports.check = checkResolver;
+exports.resolve = selectResolver;
+exports.check = checkResolver;

@@ -1,4 +1,4 @@
-var DeanEdwardsUnpacker = require('../utils/Dean-Edwards-Unpacker');
+var DeanEdwardsUnpacker = require('../utils/Dean-Edwards-Unpacker').unpacker;
 
 function resolve(link)
 {
@@ -50,4 +50,4 @@ function resolve(link)
 }
 
 //Export resolve function
-module.exports = resolve;
+exports.resolve = resolve;

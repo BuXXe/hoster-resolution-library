@@ -1,4 +1,4 @@
-var Base64  = require('../utils/Base64');
+var Base64  = require('../utils/Base64').Base64;
 
 //returns list [link, filelink] or null if no valid link
 function resolve(link)
@@ -27,7 +27,7 @@ function resolve(link)
 }
 
 //Export resolve function
-module.exports = resolve;
+exports.resolve = resolve;
 
 
 

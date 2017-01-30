@@ -40,4 +40,4 @@ function resolve(link)
 }
 
 //Export resolve function
-module.exports = resolve;
+exports.resolve = resolve;
