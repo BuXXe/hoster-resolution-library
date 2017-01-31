@@ -16,13 +16,11 @@ function resolve(link)
   	 
 	    // POSTING DATA
 	    var postresponse = showtime.httpReq(link, {headers:head,compression:true,postdata: postdata, method: "POST" });
-  	
+	    
+	    // find parameters for api call
 	    var file = /flashvars.file="(.*?)"/g.exec(postresponse.toString())[1];
 	    var filekey = /flashvars.filekey="(.*?)"/g.exec(postresponse.toString())[1];
-	    
 	    var params = {cid:1, cid3:"auroravid.to", cid2:"undefined", pass:"undefined", file:file, key:filekey, numOfErrors:0, user:"undefined"};
-    
-	    // find parameters for api call
  		var apiResponse = showtime.httpReq("http://www.auroravid.to/api/player.api.php", {headers:head,args:params, noFollow:true,compression:true});
  
 	  	finallink = /url=(.*?)&/g.exec(apiResponse.toString())[1];
