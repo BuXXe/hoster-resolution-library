@@ -1,3 +1,5 @@
+utils = require('../utils/utils');
+
 function resolve(link) {
   try {
     var postresponse = showtime.httpReq(link).toString();
@@ -28,23 +30,7 @@ function resolve(link) {
     // ... and do the request
     postresponse = showtime.httpReq('http://www.flashx.tv/dl?playnow', {postdata: postparams, method: "POST"}).toString();
 
-    // Find sources list
-    var retval = [];
-    reg = /\{.*src *:.+label *:.+\}|\{.*label *:.+src *:.+\}/g;
-    do {
-      m = reg.exec(postresponse);
-
-      if (m) {
-        retval.push(m[0].match(/label *: *["']([^"']*)/)[1]);
-        retval.push(m[0].match(/src *: *["']([^"']*)/)[1]);
-      }
-    } while(m);
-
-    if (retval.length > 0) {
-      return retval;
-    } else {
-      return null;
-    }
+    return utils.findSourcesList(postresponse, 'src', 'label');
   }
   catch(e) {
     showtime.trace(e.message);

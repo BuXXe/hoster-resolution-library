@@ -1,12 +1,11 @@
+utils = require('../utils/utils');
+
 function resolve(link) {
   try {
-    var postresponse = showtime.httpReq(link);
+    // If there is no referer page will only contain a js redirect to itself.
+    var postresponse = showtime.httpReq(link, {headers: {'Referer': 'http://www.bitporno.com'}}).toString();
 
-    // Find link
-    var finallink = postresponse.toString().match(/http[^"]+\.mp4/)[0];
-    finallink = finallink.replace(/\\/g, '');
-
-    return [link, finallink];
+    return utils.findSourcesList(postresponse, 'file', 'label');
   }
   catch(e) {
     showtime.trace(e.message);
