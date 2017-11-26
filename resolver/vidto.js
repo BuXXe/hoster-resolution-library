@@ -1,3 +1,5 @@
+utils = require('../utils/utils');
+
 function resolve(link)
 {
 	try{
@@ -25,10 +27,7 @@ function resolve(link)
 	    // POSTING DATA
 	    var postresponse = showtime.httpReq(link, { postdata: postdata, method: "POST" });
 
-	    // Find link (assume that the first one is the highest resolution)
-		  var finallink = postresponse.toString().match(/http[^"]+\.mp4/)[0];
-
-	    return [link, finallink];
+			return utils.findSourcesList(postresponse, 'file', 'label');
 	}
 	catch(e){
 		showtime.trace(e.message);
