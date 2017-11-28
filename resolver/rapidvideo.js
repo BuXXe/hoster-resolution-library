@@ -1,55 +1,33 @@
-var DeanEdwardsUnpacker = require('../utils/Dean-Edwards-Unpacker').unpacker;
-
 function resolve(link)
 {
-	try{
-		var getEmissionsResponse = showtime.httpGet(link);
-	  	var dom = html.parse(getEmissionsResponse.toString());
-	  	var inputs = dom.root.getElementByTagName('form')[1].getElementByTagName("input");
-  		
-	  	var postdata = {
-			op : inputs[0].attributes.getNamedItem("value").value, 
-			usr_login : inputs[1].attributes.getNamedItem("value").value,
-			id : inputs[2].attributes.getNamedItem("value").value,
-			fname : inputs[3].attributes.getNamedItem("value").value,
-			referer : inputs[4].attributes.getNamedItem("value").value,
-			hash : inputs[5].attributes.getNamedItem("value").value,
-			imhuman : inputs[6].attributes.getNamedItem("value").value
-  		};
-	  	    
-	    // POST DATA COLLECTED
-	    // WAIT 10 SECONDS
-	    for (var i = 0; i < 11; i++) {
-	    	showtime.notify("Waiting " + (10-i).toString() +" Seconds",1);
-	        showtime.sleep(1);
-	    }
-	     
-	    // POSTING DATA
-	    var postresponse = showtime.httpReq(link, { postdata: postdata, method: "POST" });
-	     
-	    // find Dean Edwards packed content
-	    var FindPackedContent = /eval\(function\(p,a,c,k,e,d\)([\s\S]*?)<\/script>/g;
-	    var packed = "eval(function(p,a,c,k,e,d)" + FindPackedContent.exec(postresponse.toString())[1];
-	    
-	    // unpack the packed content
-	  	var unpacked = DeanEdwardsUnpacker.unpack(packed);
-	  	
-	  	// find source entries
-	  	var json = /sources:([\s\S]*?)image/g.exec(unpacked)[1].replace("],","]").replace(/file:/g,'"file":').replace(/label:/g,'"label":');
-	  	var sourceobj = showtime.JSONDecode(json);
+	try {
+		// Standard html5 player embedded on page, sometimes there are different
+		// resolutions linked. They will be requested if they are there.
+		var html = require('showtime/html');
+		var pagecontent = showtime.httpReq(link).toString();
 
-	  	// sources object holds reference to mp4 files and m3u8
-	  	// return the first mp4
-	  	// TODO: in the future we need an architecture which allows multiple links to be returned by the resolver
-	  	for(var k=0; k< sourceobj.length; k++)
-	  	{
-	  		if (sourceobj[k].file.indexOf(".m3u8") > -1)
-	  			continue;
-	  		else
-  			{
-	  			return [link,sourceobj[k].file];
-  			}
-	  	}
+		// Check if there are different resolutions linked.
+		// Match links with q= parameter
+		var links = []
+		var reg = /http.+[&?]q=([^&?"]+)/g;
+		var m;
+		while (m = reg.exec(pagecontent)) {
+			links.push(m[1]);
+			links.push(m[0]);
+		} while(m);
+
+		// Get streams from links
+		if (links.length > 2) {
+			for (var i = 0; i < links.length; i += 2) {
+				var dom = html.parse(showtime.httpReq(links[i+1]).toString());
+				links[i+1] = dom.root.getElementByTagName('source')[0].attributes.getNamedItem('src').value;
+			}
+		} else {
+			var dom = html.parse(pagecontent);
+			links[1] = dom.root.getElementByTagName('source')[0].attributes.getNamedItem('src').value;
+		}
+
+		return links;
 	}
 	catch(e){
 		showtime.trace(e.message);
